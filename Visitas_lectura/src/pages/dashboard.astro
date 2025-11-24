@@ -1,10 +1,6 @@
----
----
-
-<!doctype html>
 <html lang="es">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Visitas</title>
     <link rel="stylesheet" href="/src/styles/global.css" />
@@ -29,27 +25,26 @@
     </div>
 
     <script type="module">
+      import Cookies from 'js-cookie';
       import { getVisitas, logout } from '../lib/api.js';
+
+      // 1️⃣ Verificar token
+      if (!Cookies.get('access_token')) window.location.href = '/login';
 
       const status = document.getElementById('status');
       const list = document.getElementById('list');
       const logoutBtn = document.getElementById('logoutBtn');
       const canvas = document.getElementById('visitasChart');
 
-      logoutBtn.addEventListener('click', () => {
-        logout();
-      });
+      logoutBtn.addEventListener('click', () => logout());
 
+      // 2️⃣ Agrupar por fecha de entrada
       function groupByDate(items) {
         const counts = {};
         for (const it of items) {
-          let d = it.fecha || it.date || it.created_at || null;
-          if (d) {
-            // Normalizar a YYYY-MM-DD si viene con hora
-            d = d.split('T')[0];
-          } else {
-            d = 'sin_fecha';
-          }
+          let d = it.hora_entrada || null;
+          if (d) d = d.split('T')[0];
+          else d = 'sin_fecha';
           counts[d] = (counts[d] || 0) + 1;
         }
         return counts;
@@ -58,70 +53,59 @@
       async function load() {
         try {
           const resp = await getVisitas();
-          console.log('DEBUG getVisitas response:', resp);
           const items = resp.data || [];
-          console.log('DEBUG items:', items);
           if (!items.length) {
-            status.textContent = 'La API respondió correctamente pero no hay registros.';
+            status.textContent = 'No hay visitas registradas.';
             return;
           }
           status.textContent = '';
+
+          // 3️⃣ Mostrar lista de visitas
           list.innerHTML = items.map(v => `
             <li class="p-2 border rounded flex justify-between items-center">
               <div>
-                <div class="font-medium">${v.titulo || v.nombre || 'Visita'}</div>
-                <div class="text-sm text-gray-500">ID: ${v.id ?? '—'}</div>
+                <div class="font-medium">${v.nombre}</div>
+                <div class="text-sm text-gray-500">
+                  Entrada: ${v.hora_entrada} | Salida: ${v.hora_salida || '—'}
+                </div>
               </div>
-              <div class="text-sm text-gray-600">${v.fecha ?? ''}</div>
             </li>
           `).join('');
 
-          // Preparar datos para el gráfico
+          // 4️⃣ Preparar gráfico
           const counts = groupByDate(items);
           const labels = Object.keys(counts).sort();
           const data = labels.map(l => counts[l]);
 
-          // Cargar Chart.js dinámicamente desde CDN (evita tocar dependencias)
-          try {
-            const module = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.esm.js');
-            const { Chart, registerables } = module;
-            Chart.register(...registerables);
+          const module = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.esm.js');
+          const { Chart, registerables } = module;
+          Chart.register(...registerables);
 
-            const ctx = canvas.getContext('2d');
-            // eslint-disable-next-line no-unused-vars
-            const visitasChart = new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels,
-                datasets: [
-                  {
-                    label: 'Visitas',
-                    data,
-                    backgroundColor: 'rgba(54,162,235,0.6)',
-                    borderColor: 'rgba(54,162,235,1)',
-                    borderWidth: 1,
-                  },
-                ],
+          const ctx = canvas.getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels,
+              datasets: [{
+                label: 'Visitas',
+                data,
+                backgroundColor: 'rgba(54,162,235,0.6)',
+                borderColor: 'rgba(54,162,235,1)',
+                borderWidth: 1,
+              }],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                x: { title: { display: true, text: 'Fecha' } },
+                y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
               },
-              options: {
-                responsive: true,
-                scales: {
-                  x: { title: { display: true, text: 'Fecha' } },
-                  y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
-                },
-              },
-            });
-          } catch (err) {
-            console.error('Error cargando Chart.js:', err);
-            const ph = document.createElement('div');
-            ph.className = 'text-red-500 mt-2';
-            ph.textContent = 'No se pudo cargar Chart.js. Revisa la consola.';
-            canvas.parentNode.appendChild(ph);
-          }
+            },
+          });
 
         } catch (err) {
           console.error(err);
-          status.textContent = 'Error al obtener datos desde la API. Revisa la consola.';
+          status.textContent = 'Error al obtener datos desde la API.';
         }
       }
 
