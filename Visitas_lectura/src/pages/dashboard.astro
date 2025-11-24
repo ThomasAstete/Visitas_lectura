@@ -1,0 +1,69 @@
+---
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Visitas</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body class="min-h-screen bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto">
+      <header class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Dashboard - Visitas</h1>
+        <button id="logoutBtn" class="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
+      </header>
+
+      <section class="bg-white p-6 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">Datos de la API</h2>
+        <div id="status" class="text-gray-600 mb-4">Cargando datos...</div>
+        <ul id="list" class="space-y-2"></ul>
+
+        <div id="chartsPlaceholder" class="mt-6 p-4 border rounded text-gray-500">
+          Aquí se mostrarán los gráficos una vez que añadas la integración (ej. Chart.js).
+        </div>
+      </section>
+    </div>
+
+    <script type="module">
+      import { getVisitas, logout } from '../lib/api.js';
+
+      const status = document.getElementById('status');
+      const list = document.getElementById('list');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      logoutBtn.addEventListener('click', () => {
+        logout();
+      });
+
+      async function load() {
+        try {
+          const resp = await getVisitas();
+          const items = resp.data || [];
+          if (!items.length) {
+            status.textContent = 'La API respondió correctamente pero no hay registros.';
+            return;
+          }
+          status.textContent = '';
+          list.innerHTML = items.map(v => `
+            <li class="p-2 border rounded flex justify-between items-center">
+              <div>
+                <div class="font-medium">${v.titulo || v.nombre || 'Visita'}</div>
+                <div class="text-sm text-gray-500">ID: ${v.id ?? '—'}</div>
+              </div>
+              <div class="text-sm text-gray-600">${v.fecha ?? ''}</div>
+            </li>
+          `).join('');
+        } catch (err) {
+          console.error(err);
+          // Si el api.js hace logout al detectar 401, aquí se manejará cualquier otro error
+          status.textContent = 'Error al obtener datos desde la API. Revisa la consola.';
+        }
+      }
+
+      load();
+    </script>
+  </body>
+</html>

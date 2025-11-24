@@ -1,0 +1,42 @@
+---
+import { login } from '../lib/api.js';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded shadow-md w-96">
+      <h1 class="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h1>
+      <form id="loginForm" class="flex flex-col gap-4">
+        <input type="text" name="username" placeholder="Usuario" class="border p-2 rounded" required>
+        <input type="password" name="password" placeholder="Contraseña" class="border p-2 rounded" required>
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Entrar</button>
+      </form>
+      <p id="error" class="text-red-500 mt-2 hidden"></p>
+    </div>
+
+    <script type="module">
+      import { login } from '../lib/api.js';
+      const form = document.getElementById('loginForm');
+      const errorMsg = document.getElementById('error');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMsg.classList.add('hidden');
+
+        const data = new FormData(form);
+        try {
+          await login(data.get('username'), data.get('password'));
+          window.location.href = '/dashboard';
+        } catch (err) {
+          errorMsg.textContent = 'Usuario o contraseña incorrectos';
+          errorMsg.classList.remove('hidden');
+        }
+      });
+    </script>
+  </body>
+</html>
