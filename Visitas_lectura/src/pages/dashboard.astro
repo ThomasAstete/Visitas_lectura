@@ -21,8 +21,9 @@
         <div id="status" class="text-gray-600 mb-4">Cargando datos...</div>
         <ul id="list" class="space-y-2"></ul>
 
-        <div id="chartsPlaceholder" class="mt-6 p-4 border rounded text-gray-500">
-          Aquí se mostrarán los gráficos una vez que añadas la integración (ej. Chart.js).
+        <div class="mt-6">
+          <h3 class="font-medium mb-2">Gráfico: Visitas por fecha</h3>
+          <canvas id="visitasChart" width="800" height="300" class="w-full"></canvas>
         </div>
       </section>
     </div>
@@ -33,15 +34,33 @@
       const status = document.getElementById('status');
       const list = document.getElementById('list');
       const logoutBtn = document.getElementById('logoutBtn');
+      const canvas = document.getElementById('visitasChart');
 
       logoutBtn.addEventListener('click', () => {
         logout();
       });
 
+      function groupByDate(items) {
+        const counts = {};
+        for (const it of items) {
+          let d = it.fecha || it.date || it.created_at || null;
+          if (d) {
+            // Normalizar a YYYY-MM-DD si viene con hora
+            d = d.split('T')[0];
+          } else {
+            d = 'sin_fecha';
+          }
+          counts[d] = (counts[d] || 0) + 1;
+        }
+        return counts;
+      }
+
       async function load() {
         try {
           const resp = await getVisitas();
+          console.log('DEBUG getVisitas response:', resp);
           const items = resp.data || [];
+          console.log('DEBUG items:', items);
           if (!items.length) {
             status.textContent = 'La API respondió correctamente pero no hay registros.';
             return;
@@ -56,9 +75,52 @@
               <div class="text-sm text-gray-600">${v.fecha ?? ''}</div>
             </li>
           `).join('');
+
+          // Preparar datos para el gráfico
+          const counts = groupByDate(items);
+          const labels = Object.keys(counts).sort();
+          const data = labels.map(l => counts[l]);
+
+          // Cargar Chart.js dinámicamente desde CDN (evita tocar dependencias)
+          try {
+            const module = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.esm.js');
+            const { Chart, registerables } = module;
+            Chart.register(...registerables);
+
+            const ctx = canvas.getContext('2d');
+            // eslint-disable-next-line no-unused-vars
+            const visitasChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels,
+                datasets: [
+                  {
+                    label: 'Visitas',
+                    data,
+                    backgroundColor: 'rgba(54,162,235,0.6)',
+                    borderColor: 'rgba(54,162,235,1)',
+                    borderWidth: 1,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                scales: {
+                  x: { title: { display: true, text: 'Fecha' } },
+                  y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+                },
+              },
+            });
+          } catch (err) {
+            console.error('Error cargando Chart.js:', err);
+            const ph = document.createElement('div');
+            ph.className = 'text-red-500 mt-2';
+            ph.textContent = 'No se pudo cargar Chart.js. Revisa la consola.';
+            canvas.parentNode.appendChild(ph);
+          }
+
         } catch (err) {
           console.error(err);
-          // Si el api.js hace logout al detectar 401, aquí se manejará cualquier otro error
           status.textContent = 'Error al obtener datos desde la API. Revisa la consola.';
         }
       }

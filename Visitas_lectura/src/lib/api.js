@@ -79,7 +79,8 @@ export const logout = () => {
 };
 
 // Endpoints para visitas
-export const getVisitas = () => api.get('/visitas/'); // lista todas las visitas
+// Obtener lista pública/endpoint específico
+export const getVisitas = () => api.get('/visitas/'); // lista todas las visitas (usa baseURL: /api/visitas/)
 export const getVisita = (id) => api.get(`/visitas/${id}/`); // detalle de una visita
 export const deleteVisita = (id) => api.delete(`/visitas/${id}/`);
 export const saveVisita = (data, id = null) => 
