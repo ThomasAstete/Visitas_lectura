@@ -1,0 +1,141 @@
+---
+// components/VisitasChart.astro
+---
+
+<div class="mt-6">
+  <div id="chart-container">
+    <canvas id="visitasChart" width="800" height="300" class="w-full"></canvas>
+  </div>
+</div>
+
+<script type="module">
+  // Declarar currentChart correctamente
+  let currentChart = null;
+
+  // Definir colores fuera de la función
+  const colors = {
+    bar: { bg: 'rgba(54,162,235,0.6)', border: 'rgba(54,162,235,1)' },
+    line: { bg: 'rgba(75,192,192,0.6)', border: 'rgba(75,192,192,1)' },
+    pie: { 
+      bg: [
+        'rgba(255,99,132,0.6)', 'rgba(54,162,235,0.6)', 'rgba(255,205,86,0.6)',
+        'rgba(75,192,192,0.6)', 'rgba(153,102,255,0.6)', 'rgba(255,159,64,0.6)'
+      ],
+      border: [
+        'rgba(255,99,132,1)', 'rgba(54,162,235,1)', 'rgba(255,205,86,1)',
+        'rgba(75,192,192,1)', 'rgba(153,102,255,1)', 'rgba(255,159,64,1)'
+      ]
+    },
+    doughnut: { 
+      bg: [
+        'rgba(255,99,132,0.6)', 'rgba(54,162,235,0.6)', 'rgba(255,205,86,0.6)',
+        'rgba(75,192,192,0.6)', 'rgba(153,102,255,0.6)', 'rgba(255,159,64,0.6)'
+      ],
+      border: [
+        'rgba(255,99,132,1)', 'rgba(54,162,235,1)', 'rgba(255,205,86,1)',
+        'rgba(75,192,192,1)', 'rgba(153,102,255,1)', 'rgba(255,159,64,1)'
+      ]
+    }
+  };
+
+  export function createChart(items, chartType = 'bar') {
+    // Destruir gráfico anterior si existe
+    if (currentChart) {
+      currentChart.destroy();
+    }
+
+    // Agrupar por fecha
+    function groupByDate(items) {
+      const counts = {};
+      for (const it of items) {
+        let date = it.hora_entrada || null;
+        if (date) {
+          date = date.split('T')[0];
+          // Formatear fecha más bonito - CORREGIDO: toLocaleDateString
+          date = new Date(date).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit'
+          });
+        } else {
+          date = 'Sin fecha';
+        }
+        counts[date] = (counts[date] || 0) + 1;
+      }
+      return counts;
+    }
+
+    const counts = groupByDate(items);
+    const labels = Object.keys(counts);
+    const data = Object.values(counts);
+
+    const canvas = document.getElementById('visitasChart');
+    if (!canvas) {
+      console.error('No se encontró el canvas para el gráfico');
+      return null;
+    }
+
+    const ctx = canvas.getContext('2d');
+    
+    const chartConfig = {
+      type: chartType,
+      data: {
+        labels,
+        datasets: [{
+          label: 'Visitas por fecha',
+          data,
+          backgroundColor: Array.isArray(colors[chartType].bg) 
+            ? colors[chartType].bg 
+            : colors[chartType].bg,
+          borderColor: Array.isArray(colors[chartType].border) 
+            ? colors[chartType].border 
+            : colors[chartType].border,
+          borderWidth: 2,
+          fill: chartType === 'line',
+          tension: chartType === 'line' ? 0.4 : undefined
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: `Visitas por Fecha - ${items.length} totales`,
+            font: { size: 16 }
+          },
+          legend: {
+            position: chartType === 'pie' || chartType === 'doughnut' ? 'right' : 'top',
+          }
+        },
+        scales: chartType !== 'pie' && chartType !== 'doughnut' ? {
+          x: { 
+            title: { display: true, text: 'Fecha' },
+            ticks: { maxRotation: 45 }
+          },
+          y: { 
+            beginAtZero: true, 
+            title: { display: true, text: 'Cantidad de Visitas' },
+            ticks: { stepSize: 1 }
+          },
+        } : undefined,
+      },
+    };
+
+    // Usar window.Chart para acceder a Chart.js
+    currentChart = new window.Chart(ctx, chartConfig);
+    return currentChart;
+  }
+
+  // Función para limpiar gráfico
+  export function destroyChart() {
+    if (currentChart) {
+      currentChart.destroy();
+      currentChart = null;
+    }
+  }
+
+  // Hacer disponibles las funciones globalmente cuando el script se cargue
+  document.addEventListener('DOMContentLoaded', () => {
+    window.createChart = createChart;
+    window.destroyChart = destroyChart;
+  });
+</script>

@@ -4,14 +4,17 @@
     <title>Inicio</title>
   </head>
   <body>
-    <script>
-      const token = Cookies.get('access_token');
-      if(token){
-        window.location.href = '/dashboard';
-      } else {
-        window.location.href = '/login';
-      }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const Cookies = (window as any).Cookies;
+        const token = Cookies ? Cookies.get('access_token') : null;
+        if (token) {
+          window.location.href = '/dashboard';
+        } else {
+          window.location.href = '/login';
+        }
+      });
+    </script>
   </body>
 </html>

@@ -1,115 +1,162 @@
+---
+// pages/dashboard.astro - CORREGIDO
+import ChartSelector from '../components/ChartSelector.astro';
+import VisitasChart from '../components/VisitasChart.astro';
+---
+
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Visitas</title>
     <link rel="stylesheet" href="/src/styles/global.css" />
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
   </head>
   <body class="min-h-screen bg-gray-100 p-6">
-    <div class="max-w-4xl mx-auto">
-      <header class="flex items-center justify-between mb-6">
+    <div class="max-w-6xl mx-auto">
+      <header class="flex items-center justify-between mb-6 bg-white p-4 rounded shadow">
         <h1 class="text-2xl font-bold">Dashboard - Visitas</h1>
-        <button id="logoutBtn" class="bg-red-500 text-white px-3 py-1 rounded">Cerrar sesión</button>
+        <button 
+          id="logoutBtn" 
+          class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+        >
+          Cerrar sesión
+        </button>
       </header>
 
       <section class="bg-white p-6 rounded shadow">
-        <h2 class="text-lg font-semibold mb-4">Datos de la API</h2>
+        <h2 class="text-xl font-semibold mb-4">Lista de Visitas</h2>
         <div id="status" class="text-gray-600 mb-4">Cargando datos...</div>
-        <ul id="list" class="space-y-2"></ul>
-
-        <div class="mt-6">
-          <h3 class="font-medium mb-2">Gráfico: Visitas por fecha</h3>
-          <canvas id="visitasChart" width="800" height="300" class="w-full"></canvas>
-        </div>
+        
+        <!-- Lista de visitas -->
+        <ul id="visitasList" class="space-y-3 mb-6"></ul>
+        
+        <!-- Selector de gráficos -->
+        <ChartSelector client:load />
+        
+        <!-- Gráfico -->
+        <VisitasChart client:load />
       </section>
     </div>
 
-    <script type="module">
-      import Cookies from 'js-cookie';
-      import { getVisitas, logout } from '../lib/api.js';
+    <script>
+      // @ts-nocheck
+      // Asegurarse de que Cookies esté disponible
+      const Cookies = (window as any).Cookies;
 
-      // 1️⃣ Verificar token
-      if (!Cookies.get('access_token')) window.location.href = '/login';
+      // Verificar token
+      if (!Cookies.get('access_token')) {
+        window.location.href = '/login';
+      }
 
       const status = document.getElementById('status');
-      const list = document.getElementById('list');
+      const visitasList = document.getElementById('visitasList');
       const logoutBtn = document.getElementById('logoutBtn');
-      const canvas = document.getElementById('visitasChart');
 
-      logoutBtn.addEventListener('click', () => logout());
+      logoutBtn.addEventListener('click', () => {
+        Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
+        Cookies.remove('auth_scheme');
+        window.location.href = '/login';
+      });
 
-      // 2️⃣ Agrupar por fecha de entrada
-      function groupByDate(items) {
-        const counts = {};
-        for (const it of items) {
-          let d = it.hora_entrada || null;
-          if (d) d = d.split('T')[0];
-          else d = 'sin_fecha';
-          counts[d] = (counts[d] || 0) + 1;
+      // Función para renderizar lista
+      function renderVisitasList(items) {
+        if (!items || !items.length) {
+          visitasList.innerHTML = '<li class="text-gray-500 text-center py-4">No hay visitas registradas.</li>';
+          return;
         }
-        return counts;
-      }
 
-      async function load() {
-        try {
-          const resp = await getVisitas();
-          const items = resp.data || [];
-          if (!items.length) {
-            status.textContent = 'No hay visitas registradas.';
-            return;
-          }
-          status.textContent = '';
-
-          // 3️⃣ Mostrar lista de visitas
-          list.innerHTML = items.map(v => `
-            <li class="p-2 border rounded flex justify-between items-center">
-              <div>
-                <div class="font-medium">${v.nombre}</div>
-                <div class="text-sm text-gray-500">
-                  Entrada: ${v.hora_entrada} | Salida: ${v.hora_salida || '—'}
+        visitasList.innerHTML = items.map(visita => `
+          <li class="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h3 class="font-semibold text-lg text-gray-800">${visita.nombre || 'Visitante'}</h3>
+                <div class="text-sm text-gray-600 mt-1">
+                  <span class="font-medium">Empresa:</span> ${visita.empresa || 'No especificada'}
+                </div>
+                ${visita.motivo ? `
+                  <div class="text-sm text-gray-600">
+                    <span class="font-medium">Motivo:</span> ${visita.motivo}
+                  </div>
+                ` : ''}
+                <div class="text-xs text-gray-500 mt-2">
+                  <span class="font-medium">Entrada:</span> ${visita.hora_entrada ? new Date(visita.hora_entrada).toLocaleString('es-ES') : '—'}
+                  ${visita.hora_salida ? ` | <span class="font-medium">Salida:</span> ${new Date(visita.hora_salida).toLocaleString('es-ES')}` : ''}
                 </div>
               </div>
-            </li>
-          `).join('');
+            </div>
+          </li>
+        `).join('');
+      }
 
-          // 4️⃣ Preparar gráfico
-          const counts = groupByDate(items);
-          const labels = Object.keys(counts).sort();
-          const data = labels.map(l => counts[l]);
+      let visitasData = /** @type {any[]} */ ([]);
 
-          const module = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.esm.js');
-          const { Chart, registerables } = module;
-          Chart.register(...registerables);
-
-          const ctx = canvas.getContext('2d');
-          new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels,
-              datasets: [{
-                label: 'Visitas',
-                data,
-                backgroundColor: 'rgba(54,162,235,0.6)',
-                borderColor: 'rgba(54,162,235,1)',
-                borderWidth: 1,
-              }],
-            },
-            options: {
-              responsive: true,
-              scales: {
-                x: { title: { display: true, text: 'Fecha' } },
-                y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
-              },
-            },
+      async function loadVisitas() {
+        try {
+          const token = Cookies.get('access_token');
+          const scheme = Cookies.get('auth_scheme') || 'Bearer';
+          
+          const response = await fetch('https://visitas-empresa.onrender.com/api/visitas/', {
+            headers: {
+              'Authorization': `${scheme} ${token}`,
+              'Content-Type': 'application/json'
+            }
           });
 
+          if (!response.ok) throw new Error('Error al cargar visitas');
+          
+          const data = await response.json();
+          visitasData = data.data || data || [];
+          
+          if (!visitasData.length) {
+            if (status) status.textContent = 'No hay visitas registradas.';
+            if (visitasList) visitasList.innerHTML = '';
+            return;
+          }
+
+          if (status) status.textContent = `Total de visitas: ${visitasData.length}`;
+          renderVisitasList(visitasData);
+          
+          // Esperar a que los componentes se carguen (polling con timeout)
+          /** @param {() => boolean} fnCheck */
+          async function waitFor(fnCheck, timeout = 3000, interval = 50) {
+            const start = Date.now();
+            while (!fnCheck()) {
+              if (Date.now() - start > timeout) return false;
+              await new Promise(r => setTimeout(r, interval));
+            }
+            return true;
+          }
+
+          waitFor(() => ((window as any).setupChartSelector && (window as any).createChart), 3000)
+            .then((available) => {
+              if (!available) {
+                console.warn('Funciones de gráfico no disponibles tras espera.');
+                return;
+              }
+
+              // Crear gráfico inicial
+              (window as any).createChart(visitasData, 'bar');
+
+              // Configurar selector de gráficos
+              (window as any).setupChartSelector((/** @type {any} */ chartType) => {
+                if ((window as any).destroyChart) (window as any).destroyChart();
+                (window as any).createChart(visitasData, chartType);
+              });
+            });
+          
         } catch (err) {
-          console.error(err);
-          status.textContent = 'Error al obtener datos desde la API.';
+          console.error('Error:', err);
+          if (status) status.textContent = 'Error al cargar los datos. Verifica tu conexión.';
+          if (status) status.className = 'text-red-500';
         }
       }
 
-      load();
+      // Las funciones `createChart` y `setupChartSelector` las registra cada componente en `window`.
+
+      loadVisitas();
     </script>
   </body>
 </html>

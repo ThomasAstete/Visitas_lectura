@@ -1,0 +1,60 @@
+---
+// components/ChartSelector.astro
+---
+
+<div class="mb-4 flex gap-2 flex-wrap items-center">
+  <span class="font-medium">Tipo de gráfico:</span>
+  <button 
+    data-chart-type="bar" 
+    class="chart-btn bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors"
+  >
+    Barras
+  </button>
+  <button 
+    data-chart-type="line" 
+    class="chart-btn bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition-colors"
+  >
+    Líneas
+  </button>
+  <button 
+    data-chart-type="pie" 
+    class="chart-btn bg-purple-500 text-white px-3 py-1 rounded text-sm hover:bg-purple-600 transition-colors"
+  >
+    Circular
+  </button>
+  <button 
+    data-chart-type="doughnut" 
+    class="chart-btn bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600 transition-colors"
+  >
+    Dona
+  </button>
+</div>
+
+<script type="module">
+  export function setupChartSelector(onChartChange) {
+    const buttons = document.querySelectorAll('.chart-btn');
+    
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remover clase activa de todos
+        buttons.forEach(b => b.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-300'));
+        // Agregar clase activa al botón clickeado
+        btn.classList.add('ring-2', 'ring-offset-2', 'ring-blue-300');
+        
+        const chartType = btn.dataset.chartType; // CORREGIDO: "chartType" no "charitype"
+        onChartChange(chartType); // CORREGIDO: "chartType" no "chartype"
+      });
+    });
+    
+    // Activar el primero por defecto
+    if (buttons[0]) {
+      buttons[0].classList.add('ring-2', 'ring-offset-2', 'ring-blue-300');
+    }
+  }
+
+  // Inicializar cuando el componente se cargue
+  document.addEventListener('DOMContentLoaded', () => {
+    // Esta función se llamará desde el dashboard
+    window.setupChartSelector = setupChartSelector;
+  });
+</script>

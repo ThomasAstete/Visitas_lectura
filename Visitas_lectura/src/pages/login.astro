@@ -1,59 +1,23 @@
+---
+// pages/login.astro - CORREGIDO
+import LoginForm from '../components/LoginForm.astro';
+---
+
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <title>Login - Visitas</title>
     <link rel="stylesheet" href="/src/styles/global.css" />
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
   </head>
   <body class="flex items-center justify-center h-screen bg-gray-100">
     <div class="bg-white p-8 rounded shadow-md w-96">
       <h1 class="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h1>
-      <form id="loginForm" class="flex flex-col gap-4">
-        <input type="text" name="username" placeholder="Usuario" class="border p-2 rounded" required />
-        <input type="password" name="password" placeholder="Contraseña" class="border p-2 rounded" required />
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Entrar</button>
-      </form>
+      
+      <!-- Usar el componente CORRECTAMENTE -->
+      <LoginForm client:load />
+      
       <p id="error" class="text-red-500 mt-2 hidden"></p>
     </div>
-
-    <script type="module">
-      import { login } from '../lib/api.js';
-      import Cookies from 'js-cookie';
-
-      const form = document.getElementById('loginForm');
-      const errorMsg = document.getElementById('error');
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorMsg.classList.add('hidden');
-
-        const data = new FormData(form);
-        const username = data.get('username');
-        const password = data.get('password');
-
-        try {
-          const res = await login(username, password);
-
-          // Guardar token según tipo
-          if (res.access) {
-            Cookies.set('access_token', res.access, { expires: 1 });
-            if (res.refresh) Cookies.set('refresh_token', res.refresh, { expires: 7 });
-            Cookies.set('auth_scheme', 'Bearer');
-          } else if (res.token) {
-            Cookies.set('access_token', res.token, { expires: 7 });
-            Cookies.set('auth_scheme', 'Token');
-          } else {
-            throw new Error('No se obtuvo token del servidor');
-          }
-
-          // Redirigir al dashboard
-          window.location.href = '/dashboard';
-
-        } catch (err) {
-          console.error(err);
-          errorMsg.textContent = 'Usuario o contraseña incorrectos';
-          errorMsg.classList.remove('hidden');
-        }
-      });
-    </script>
   </body>
 </html>
