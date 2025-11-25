@@ -1,5 +1,7 @@
 // lib/api.js - Versión para navegador
 
+import Cookies from 'js-cookie';
+
 const API_URL = 'https://visitas-empresa.onrender.com/api';
 
 // Función para hacer requests con autenticación

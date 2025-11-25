@@ -14,7 +14,8 @@
     "astro": "^5.16.0",
     "axios": "^1.4.0",
     "chart.js": "^4.4.0",
-    "js-cookie": "^3.0.5"
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.554.0"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",

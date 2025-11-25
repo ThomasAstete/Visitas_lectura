@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiClient } from '../lib/api';
+import { getVisitas, deleteVisita } from '../lib/api.js';
 
 const VisitList = () => {
   const [visits, setVisits] = useState([]);
@@ -13,7 +13,7 @@ const VisitList = () => {
   const loadVisits = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.getVisitas();
+      const data = await getVisitas();
       setVisits(data);
       setError(null);
     } catch (err) {
@@ -27,7 +27,7 @@ const VisitList = () => {
   const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de que quieres eliminar esta visita?')) {
       try {
-        await apiClient.deleteVisita(id);
+        await deleteVisita(id);
         await loadVisits(); // Recargar la lista
       } catch (err) {
         alert('Error al eliminar la visita: ' + err.message);
@@ -89,4 +89,4 @@ const VisitList = () => {
   );
 };
 
-export default VisitChart;
+export default VisitList;

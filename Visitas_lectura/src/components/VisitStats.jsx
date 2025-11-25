@@ -1,13 +1,11 @@
+// src/components/VisitStats.jsx
 import { useState, useEffect } from 'react';
-import { apiClient } from '../lib/api';
+import { getVisitas } from '../lib/api.js';
 
 const VisitStats = () => {
-  const [stats, setStats] = useState({
-    total: 0,
-    hoy: 0,
-    activas: 0
-  });
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadStats();
@@ -15,56 +13,53 @@ const VisitStats = () => {
 
   const loadStats = async () => {
     try {
-      const [estadisticas, visitasHoy] = await Promise.all([
-        apiClient.getEstadisticas(),
-        apiClient.getVisitasHoy()
-      ]);
+      setLoading(true);
+      const visits = await getVisitas();
       
+      // Calcular estadísticas
+      const today = new Date().toISOString().split('T')[0];
+      const visitsToday = visits.filter(visit => 
+        visit.fecha_visita && visit.fecha_visita.startsWith(today)
+      ).length;
+      
+      const totalVisits = visits.length;
+      const activeVisits = visits.filter(visit => !visit.hora_salida).length;
+
       setStats({
-        total: estadisticas.total_visitas || 0,
-        hoy: visitasHoy.length || 0,
-        activas: estadisticas.visitas_activas || 0
+        total: totalVisits,
+        today: visitsToday,
+        active: activeVisits
       });
-    } catch (error) {
-      console.error('Error loading stats:', error);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error loading stats:', err);
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading) return <div>Cargando estadísticas...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!stats) return <div>No hay datos</div>;
+
   return (
     <div className="stats-container">
-      <h2>Estadísticas</h2>
-      
-      {loading ? (
-        <p>Cargando estadísticas...</p>
-      ) : (
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">📊</div>
-            <div className="stat-info">
-              <h3>Total Visitas</h3>
-              <p className="stat-number">{stats.total}</p>
-            </div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">📅</div>
-            <div className="stat-info">
-              <h3>Visitas Hoy</h3>
-              <p className="stat-number">{stats.hoy}</p>
-            </div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">🟢</div>
-            <div className="stat-info">
-              <h3>Visitas Activas</h3>
-              <p className="stat-number">{stats.activas}</p>
-            </div>
-          </div>
+      <h2>Estadísticas de Visitas</h2>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <h3>Total de Visitas</h3>
+          <p className="stat-number">{stats.total}</p>
         </div>
-      )}
+        <div className="stat-card">
+          <h3>Visitas Hoy</h3>
+          <p className="stat-number">{stats.today}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Visitas Activas</h3>
+          <p className="stat-number">{stats.active}</p>
+        </div>
+      </div>
     </div>
   );
 };
