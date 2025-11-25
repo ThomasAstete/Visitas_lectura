@@ -7,4 +7,6 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [react(), tailwind()],
 
+  // Generar salida estática para hosting en Vercel (producción en `dist/`)
+  output: 'static',
 });

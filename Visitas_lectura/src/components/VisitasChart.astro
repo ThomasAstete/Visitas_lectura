@@ -9,6 +9,7 @@
 </div>
 
 <script type="module">
+  import Chart from 'chart.js/auto';
   // Declarar currentChart correctamente
   let currentChart = null;
 
@@ -120,8 +121,8 @@
       },
     };
 
-    // Usar window.Chart para acceder a Chart.js
-    currentChart = new window.Chart(ctx, chartConfig);
+    // Usar Chart importado desde dependencia
+    currentChart = new Chart(ctx, chartConfig);
     return currentChart;
   }
 

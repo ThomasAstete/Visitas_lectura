@@ -1,7 +1,6 @@
-@import "tailwindcss";
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Estilos globales opcionales */
 body {
@@ -20,6 +19,44 @@ html {
 input, button {
   outline: none;
 }
+
+/* Utilidad hidden (si falta Tailwind en algún punto) */
+.hidden { display: none !important; }
+
+/* Login specific */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+}
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+.login-box h1 { margin: 0 0 1rem 0; font-size: 1.5rem; }
+.login-box form { display: flex; flex-direction: column; gap: 0.75rem; }
+.login-box input { padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; }
+.login-box button {
+  padding: 0.6rem 0.75rem;
+  background: #3b82f6; color: #fff; border: none; border-radius: 0.375rem;
+  cursor: pointer;
+}
+.login-box button:hover { background: #2563eb; }
+
+/* Dashboard styles */
+.dashboard-container { min-height: 100vh; background: #f3f4f6; }
+.dashboard-header { display:flex; align-items:center; justify-content:space-between; padding:1rem; background:#fff; border-radius:0.5rem; box-shadow:0 4px 10px rgba(2,6,23,0.04); }
+.dashboard-header h1 { margin:0; font-size:1.25rem; }
+.dashboard-section { margin-top:1rem; background:#fff; padding:1rem; border-radius:0.5rem; box-shadow:0 4px 10px rgba(2,6,23,0.04); }
+.visitas-list li { list-style:none; }
+.chart-container, #chart-container { margin-top:1rem; }
+
 
 /* Estilos para mensajes de error */
 .text-red-500 {
