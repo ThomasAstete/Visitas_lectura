@@ -36,7 +36,7 @@ const LoginForm = () => {
                     <Hexagon className="text-neon-blue relative z-10" size={48} strokeWidth={1.5} />
                 </div>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-widest">VENTAS <span className="text-neon-blue">ZENS</span></h1>
+            <h1 className="text-2xl font-bold text-white tracking-widest">Visitas <span className="text-neon-blue">Empresas</span></h1>
             <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Sistema de Control de Producción</p>
         </div>
 
