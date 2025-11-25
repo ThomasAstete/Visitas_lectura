@@ -3,155 +3,35 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Reset y estilos base */
-* {
+/* Estilos globales opcionales */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6; /* bg-gray-100 */
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
 }
 
-/* Login Section */
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-}
-
-.login-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-.login-form h2 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
+/* Inputs y botones personalizados */
+input, button {
   outline: none;
-  border-color: #667eea;
 }
 
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s;
+/* Estilos para mensajes de error */
+.text-red-500 {
+  color: #ef4444; /* Tailwind red-500 */
 }
 
-button:hover {
-  background: #5a6fd8;
+/* Sombras y bordes consistentes */
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.error-message {
-  background: #fee;
-  color: #c33;
-  padding: 0.75rem;
-  border-radius: 5px;
-  margin-top: 1rem;
-  text-align: center;
-  border: 1px solid #fcc;
+.rounded {
+  border-radius: 0.5rem;
 }
 
-/* Dashboard Section */
-.dashboard-container {
-  width: 100%;
-  max-width: 1200px;
-  padding: 20px;
-}
-
-.dashboard-header {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dashboard-header h1 {
-  color: #333;
-}
-
-.logout-btn {
-  width: auto;
-  padding: 0.5rem 1rem;
-  background: #dc3545;
-}
-
-.logout-btn:hover {
-  background: #c82333;
-}
-
-.dashboard-main {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-main h2 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.visitas-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.visita-card {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid #667eea;
-}
-
-.visita-card h3 {
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.visita-card p {
-  color: #666;
-  margin-bottom: 0.25rem;
-}
