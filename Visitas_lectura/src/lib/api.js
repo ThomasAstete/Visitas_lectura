@@ -102,7 +102,28 @@ export const logout = () => {
 };
 
 // Endpoints para visitas
-export const getVisitas = () => apiRequest('/visitas/');
+export const getVisitas = async () => {
+  const data = await apiRequest('/visitas/');
+  try {
+    console.debug('[getVisitas] raw response:', data);
+  } catch (e) {
+    // noop
+  }
+
+  // Normalizar distintas formas de respuesta a un array
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.results)) return data.results;
+  if (data && Array.isArray(data.data)) return data.data;
+
+  // Si el backend devolviera un objeto con arrays en propiedades, buscar el primero
+  if (data && typeof data === 'object') {
+    const arr = Object.values(data).find(v => Array.isArray(v));
+    if (Array.isArray(arr)) return arr;
+  }
+
+  // Por defecto devolver array vacío para evitar errores en componentes
+  return [];
+};
 export const getVisita = (id) => apiRequest(`/visitas/${id}/`);
 export const deleteVisita = (id) => apiRequest(`/visitas/${id}/`, { method: 'DELETE' });
 export const saveVisita = (data, id = null) => 

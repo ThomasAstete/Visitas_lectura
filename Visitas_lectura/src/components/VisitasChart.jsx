@@ -14,7 +14,8 @@ const VisitList = () => {
     try {
       setLoading(true);
       const data = await getVisitas();
-      setVisits(data);
+      const normalized = Array.isArray(data) ? data : (data && data.results && Array.isArray(data.results) ? data.results : []);
+      setVisits(normalized);
       setError(null);
     } catch (err) {
       setError(err.message);

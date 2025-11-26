@@ -14,16 +14,17 @@ const VisitStats = () => {
   const loadStats = async () => {
     try {
       setLoading(true);
-      const visits = await getVisitas();
+      const raw = await getVisitas();
+      const visits = Array.isArray(raw) ? raw : (raw && raw.results && Array.isArray(raw.results) ? raw.results : []);
       
       // Calcular estadísticas
       const today = new Date().toISOString().split('T')[0];
-      const visitsToday = visits.filter(visit => 
-        visit.fecha_visita && visit.fecha_visita.startsWith(today)
+      const visitsToday = (Array.isArray(visits) ? visits : []).filter(visit => 
+        visit && visit.fecha_visita && visit.fecha_visita.startsWith(today)
       ).length;
       
-      const totalVisits = visits.length;
-      const activeVisits = visits.filter(visit => !visit.hora_salida).length;
+      const totalVisits = Array.isArray(visits) ? visits.length : 0;
+      const activeVisits = (Array.isArray(visits) ? visits : []).filter(visit => visit && !visit.hora_salida).length;
 
       setStats({
         total: totalVisits,
