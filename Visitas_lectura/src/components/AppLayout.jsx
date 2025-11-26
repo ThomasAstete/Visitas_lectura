@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
+import SideBar from './SideBar';
 import DashboardStats from './DashboardStats';
 import VisitStats from './VisitStats';
 import VisitasChart from './VisitasChart';
