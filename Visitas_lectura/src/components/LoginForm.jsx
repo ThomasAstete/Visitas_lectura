@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login } from '../lib/api';
+import { login } from '../lib/api.js';
 import { Lock, User, ArrowRight, Hexagon } from 'lucide-react';
 
 const LoginForm = () => {
@@ -12,10 +12,23 @@ const LoginForm = () => {
     setLoading(true);
     setError('');
     try {
-      await login(formData.username, formData.password);
+      const resp = await login(formData.username, formData.password);
+      console.debug('[LoginForm] login response:', resp);
+      // Verificar que se haya guardado el token en cookies
+      try {
+        // eslint-disable-next-line no-undef
+        console.debug('[LoginForm] Cookies:', {
+          access_token: Cookies ? Cookies.get('access_token') : null,
+          auth_scheme: Cookies ? Cookies.get('auth_scheme') : null,
+        });
+      } catch (e) {
+        // Cookies puede no estar expuesto globalmente en este contexto
+      }
       window.location.href = '/panel';
     } catch (err) {
-      setError('Acceso denegado. Verifica tus credenciales.');
+      // Mostrar mensaje de error más informativo si está disponible
+      const msg = err && err.message ? err.message : 'Acceso denegado. Verifica tus credenciales.';
+      setError(msg);
       setLoading(false);
     }
   };
@@ -37,7 +50,7 @@ const LoginForm = () => {
                 </div>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-widest">Visitas <span className="text-neon-blue">Empresas</span></h1>
-            <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Sistema de Control de Producción</p>
+            <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Sistema de Control de Acceso</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
