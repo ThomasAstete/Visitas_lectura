@@ -21,7 +21,7 @@ const Sidebar = ({ currentView, setView }) => {
     <aside className="w-64 h-screen bg-cyber-dark border-r border-white/10 flex flex-col fixed left-0 top-0 z-50 backdrop-blur-md">
       <div className="p-6">
         <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-purple-500">
-          VENTAS ZENS
+          Visitas Empresas
         </h1>
       </div>
       

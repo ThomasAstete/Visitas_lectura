@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-import DashboardStats from './DashboardStats';
+import Sidebar from './SideBar';
 import VisitStats from './VisitStats';
 import VisitasChart from './VisitasChart';
 
@@ -10,10 +9,10 @@ const AppLayout = () => {
   // Función para renderizar la vista activa
   const renderContent = () => {
     switch(view) {
-      case 'dashboard': return <DashboardStats />;
+      case 'dashboard': return <VisitStats />;
       case 'visitas' : return <VisitasChart />;
       case 'stats'   : return <VisitStats />;
-      default: return <DashboardStats />;
+      default: return <VisitStats />;
     }
   };
 
