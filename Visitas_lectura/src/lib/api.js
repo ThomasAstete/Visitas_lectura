@@ -55,19 +55,13 @@ export const login = async (username, password) => {
       },
       body: JSON.stringify({ username, password }),
     });
-    console.debug('[login] /token/ status:', response.status);
-    const data = await response.json().catch(() => null);
-    console.debug('[login] /token/ response json:', data);
 
-    if (response.ok && data) {
+    if (response.ok) {
+      const data = await response.json();
       if (data.access) {
         Cookies.set('access_token', data.access, { expires: 1 });
         if (data.refresh) Cookies.set('refresh_token', data.refresh, { expires: 7 });
         Cookies.set('auth_scheme', 'Bearer');
-        console.debug('[login] Stored cookies:', {
-          access_token: Cookies.get('access_token'),
-          auth_scheme: Cookies.get('auth_scheme'),
-        });
         return data;
       }
     }
@@ -77,29 +71,23 @@ export const login = async (username, password) => {
 
   // Intentamos endpoint DRF TokenAuthentication
   try {
-    const response = await fetch(`${API_URL}/api-token-auth/`, {
+    const response = await fetch(`${API_URL}/api/token/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username, password }),
     });
-    console.debug('[login] /api-token-auth/ status:', response.status);
-    const data = await response.json().catch(() => null);
-    console.debug('[login] /api-token-auth/ response json:', data);
 
-    if (response.ok && data) {
+    if (response.ok) {
+      const data = await response.json();
       if (data && data.token) {
         Cookies.set('access_token', data.token, { expires: 7 });
         Cookies.set('auth_scheme', 'Token');
-        console.debug('[login] Stored cookies (token):', {
-          access_token: Cookies.get('access_token'),
-          auth_scheme: Cookies.get('auth_scheme'),
-        });
         return data;
       }
     }
-
+    
     throw new Error('Credenciales incorrectas');
   } catch (err) {
     throw new Error('Error de conexión o credenciales incorrectas');

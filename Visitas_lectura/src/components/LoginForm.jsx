@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login } from '../lib/api.js';
+import { login } from '../lib/api';
 import { Lock, User, ArrowRight, Hexagon } from 'lucide-react';
 
 const LoginForm = () => {
@@ -12,23 +12,10 @@ const LoginForm = () => {
     setLoading(true);
     setError('');
     try {
-      const resp = await login(formData.username, formData.password);
-      console.debug('[LoginForm] login response:', resp);
-      // Verificar que se haya guardado el token en cookies
-      try {
-        // eslint-disable-next-line no-undef
-        console.debug('[LoginForm] Cookies:', {
-          access_token: Cookies ? Cookies.get('access_token') : null,
-          auth_scheme: Cookies ? Cookies.get('auth_scheme') : null,
-        });
-      } catch (e) {
-        // Cookies puede no estar expuesto globalmente en este contexto
-      }
+      await login(formData.username, formData.password);
       window.location.href = '/panel';
     } catch (err) {
-      // Mostrar mensaje de error más informativo si está disponible
-      const msg = err && err.message ? err.message : 'Acceso denegado. Verifica tus credenciales.';
-      setError(msg);
+      setError('Acceso denegado. Verifica tus credenciales.');
       setLoading(false);
     }
   };
