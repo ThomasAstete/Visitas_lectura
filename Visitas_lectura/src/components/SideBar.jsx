@@ -5,9 +5,8 @@ import { logout } from '../lib/api'; // <--- Importamos la función de cierre de
 const Sidebar = ({ currentView, setView }) => {
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'productos', icon: Package, label: 'Productos' },
-    { id: 'clientes', icon: Users, label: 'Clientes' },
-    { id: 'ventas', icon: ShoppingCart, label: 'Registrar Venta' },
+    { id: 'visitas', icon: Package, label: 'Visitas' },
+
   ];
 
   // Función para manejar la salida segura
