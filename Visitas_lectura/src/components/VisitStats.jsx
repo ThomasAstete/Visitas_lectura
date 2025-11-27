@@ -2,13 +2,11 @@
 import { useState, useEffect } from 'react';
 import { getVisitas } from '../lib/api.js';
 import LineChart from './LineChart';
-import { getVisitasAgg } from '../lib/api.js';
 
 const VisitStats = () => {
   const [visits, setVisits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [aggSeries, setAggSeries] = useState(null);
 
   useEffect(() => {
     loadVisits();
@@ -17,30 +15,6 @@ const VisitStats = () => {
   const loadVisits = async () => {
     try {
       setLoading(true);
-      // Primero intentamos pedir series ya agregadas desde el backend
-      try {
-        const todayAgg = await getVisitasAgg('day'); // por hora/hoy dependiente del backend
-        const monthAgg = await getVisitasAgg('month');
-        const yearAgg = await getVisitasAgg('year');
-
-        // Si recibimos datos válidos, los transformamos en el formato interno
-        const hasAgg = (todayAgg && todayAgg.data && todayAgg.data.length > 0) || (monthAgg && monthAgg.data && monthAgg.data.length > 0) || (yearAgg && yearAgg.data && yearAgg.data.length > 0);
-        if (hasAgg) {
-          // Guardamos visitas vacías (no necesarias) y almacenamos las series en el estado temporal
-          setVisits([]);
-          setAggSeries({
-            today: todayAgg,
-            month: monthAgg,
-            year: yearAgg,
-          });
-          setError(null);
-          return;
-        }
-      } catch (e) {
-        // Si falla la petición de agregados, caemos al método anterior que descarga todas las visitas
-        console.debug('Aggregated endpoints not available or failed, falling back to full fetch.', e);
-      }
-
       const raw = await getVisitas();
       const arr = Array.isArray(raw) ? raw : (raw && raw.results && Array.isArray(raw.results) ? raw.results : []);
       setVisits(arr);
