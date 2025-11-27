@@ -18,9 +18,9 @@ const Sidebar = ({ currentView, setView }) => {
   };
 
   return (
-    <aside className="w-64 h-screen bg-cyber-dark border-r border-white/10 flex flex-col fixed left-0 top-0 z-50 backdrop-blur-md">
+    <aside className="w-64 h-screen bg-surface border-r border-white/10 flex flex-col fixed left-0 top-0 z-50 backdrop-blur-md">
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-purple-500">
+        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
           Visitas Empresas
         </h1>
       </div>
@@ -30,11 +30,7 @@ const Sidebar = ({ currentView, setView }) => {
           <button
             key={item.id}
             onClick={() => setView(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group
-              ${currentView === item.id 
-                ? 'bg-neon-blue/10 text-neon-blue border border-neon-blue/30 shadow-neon' 
-                : 'text-gray-400 hover:bg-white/5 hover:text-white'
-              }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${currentView === item.id ? 'bg-primary/10 text-primary border border-primary/30 shadow-neon' : 'text-muted hover:bg-white/5 hover:text-text' }`}
           >
             <item.icon size={20} className={currentView === item.id ? 'animate-pulse' : ''} />
             <span className="font-medium">{item.label}</span>

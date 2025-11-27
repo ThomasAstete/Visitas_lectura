@@ -14,7 +14,7 @@ import { Line } from 'react-chartjs-2';
 // Registrar controladores/escala una sola vez
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const LineChart = ({ labels = [], dataset = [], title = '', color = 'rgba(99,102,241,0.8)' }) => {
+const LineChart = ({ labels = [], dataset = [], title = '', color = 'var(--color-primary)' }) => {
   const data = {
     labels,
     datasets: [
@@ -35,12 +35,12 @@ const LineChart = ({ labels = [], dataset = [], title = '', color = 'rgba(99,102
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      title: { display: !!title, text: title, color: '#fff' },
+      title: { display: !!title, text: title, color: 'var(--text)' },
       tooltip: { mode: 'index', intersect: false },
     },
     scales: {
-      x: { ticks: { color: '#cbd5e1' } },
-      y: { ticks: { color: '#cbd5e1', precision: 0 }, beginAtZero: true },
+      x: { ticks: { color: 'var(--muted)' } },
+      y: { ticks: { color: 'var(--muted)', precision: 0 }, beginAtZero: true },
     },
   };
 

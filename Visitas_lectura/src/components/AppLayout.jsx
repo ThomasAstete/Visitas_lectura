@@ -17,23 +17,23 @@ const AppLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-cyber-black text-white overflow-hidden">
+    <div className="flex h-screen bg-bg text-text overflow-hidden">
       {/* Sidebar Fijo */}
       <Sidebar currentView={view} setView={setView} />
       
       {/* Área Principal Scrollable */}
       <main className="flex-1 ml-64 p-8 h-full overflow-y-auto bg-[url('/grid-bg-dark.png')] relative">
         {/* Overlay sutil para el fondo */}
-        <div className="fixed inset-0 bg-cyber-black/90 pointer-events-none -z-10"></div>
+        <div className="fixed inset-0 bg-bg/90 pointer-events-none -z-10"></div>
         
         <header className="mb-8 flex justify-between items-center backdrop-blur-sm py-2 sticky top-0 z-10">
              <div>
-                <h2 className="text-neon-blue text-xs font-bold uppercase tracking-widest mb-1">Sistema de Control</h2>
-                <p className="text-white text-xl font-light tracking-tight">Panel Administrativo</p>
+                <h2 className="text-primary text-xs font-bold uppercase tracking-widest mb-1">Sistema de Control</h2>
+                <p className="text-text text-xl font-light tracking-tight">Panel Administrativo</p>
              </div>
              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-400">Admin User</span>
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-neon-blue to-purple-600 border border-white/20 shadow-neon"></div>
+                <span className="text-sm text-muted">Admin User</span>
+                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary to-accent border border-white/20 shadow-neon"></div>
              </div>
         </header>
 

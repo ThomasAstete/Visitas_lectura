@@ -102,36 +102,36 @@ const VisitStats = () => {
 
   return (
     <div className="stats-container">
-      <h2 className="text-2xl font-semibold mb-4">Estadísticas de Visitas</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-text">Estadísticas de Visitas</h2>
       <div className="stats-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="stat-card bg-zinc-900 p-4 rounded-md">
-          <h3 className="text-sm text-gray-400">Total de Visitas</h3>
-          <p className="text-3xl font-bold">{totalVisits}</p>
+        <div className="stat-card bg-card p-4 rounded-md">
+          <h3 className="text-sm text-muted">Total de Visitas</h3>
+          <p className="text-3xl font-bold text-text">{totalVisits}</p>
         </div>
-        <div className="stat-card bg-zinc-900 p-4 rounded-md">
-          <h3 className="text-sm text-gray-400">Visitas Hoy</h3>
-          <p className="text-3xl font-bold">{visitsToday}</p>
+        <div className="stat-card bg-card p-4 rounded-md">
+          <h3 className="text-sm text-muted">Visitas Hoy</h3>
+          <p className="text-3xl font-bold text-text">{visitsToday}</p>
         </div>
-        <div className="stat-card bg-zinc-900 p-4 rounded-md">
-          <h3 className="text-sm text-gray-400">Visitas Activas</h3>
-          <p className="text-3xl font-bold">{activeVisits}</p>
+        <div className="stat-card bg-card p-4 rounded-md">
+          <h3 className="text-sm text-muted">Visitas Activas</h3>
+          <p className="text-3xl font-bold text-text">{activeVisits}</p>
         </div>
       </div>
 
       <div className="charts space-y-6">
         <div className="chart-card bg-zinc-900 p-4 rounded-md">
           <h4 className="text-sm text-gray-300 mb-2">Hoy (por hora)</h4>
-          <LineChart labels={todayData.labels} dataset={todayData.data} title={"Visitas por Hora (Hoy)"} color={'rgba(59,130,246,0.9)'} />
+          <LineChart labels={todayData.labels} dataset={todayData.data} title={"Visitas por Hora (Hoy)"} color={'var(--color-primary)'} />
         </div>
 
         <div className="chart-card bg-zinc-900 p-4 rounded-md">
           <h4 className="text-sm text-gray-300 mb-2">Este Mes (por día)</h4>
-          <LineChart labels={monthData.labels} dataset={monthData.data} title={"Visitas por Día (Mes)"} color={'rgba(16,185,129,0.9)'} />
+          <LineChart labels={monthData.labels} dataset={monthData.data} title={"Visitas por Día (Mes)"} color={'var(--color-accent)'} />
         </div>
 
         <div className="chart-card bg-zinc-900 p-4 rounded-md">
           <h4 className="text-sm text-gray-300 mb-2">Este Año (por mes)</h4>
-          <LineChart labels={yearData.labels} dataset={yearData.data} title={"Visitas por Mes (Año)"} color={'rgba(168,85,247,0.9)'} />
+          <LineChart labels={yearData.labels} dataset={yearData.data} title={"Visitas por Mes (Año)"} color={'var(--color-primary)'} />
         </div>
       </div>
     </div>

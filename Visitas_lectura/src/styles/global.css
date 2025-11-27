@@ -2,10 +2,24 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Theme variables (Teal / Cyan palette) */
+:root {
+  --color-primary: #06b6d4; /* cyan-teal */
+  --color-accent: #0891b2;
+  --bg: #071826; /* deep navy/teal */
+  --bg-surface: #0b2630; /* cards / sidebar */
+  --text: #e6feff; /* light text */
+  --muted: #9fdbe6; /* secondary text */
+  --card: #07282e;
+  --gradient-from: #06b6d4;
+  --gradient-to: #0891b2;
+  --shadow-neon: 0 0 14px rgba(6,182,212,0.18), 0 0 28px rgba(8,145,178,0.12);
+}
+
 /* Estilos globales opcionales */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #f3f4f6; /* bg-gray-100 */
+  background-color: var(--bg);
   margin: 0;
   padding: 0;
 }
@@ -29,15 +43,15 @@ input, button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6;
+  background-color: var(--bg);
 }
 .login-box {
   width: 100%;
   max-width: 420px;
-  background: #ffffff;
+  background: var(--card);
   padding: 2rem;
   border-radius: 0.5rem;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow-neon);
 }
 .login-box h1 { margin: 0 0 1rem 0; font-size: 1.5rem; }
 .login-box form { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -50,10 +64,10 @@ input, button {
 .login-box button:hover { background: #2563eb; }
 
 /* Dashboard styles */
-.dashboard-container { min-height: 100vh; background: #f3f4f6; }
-.dashboard-header { display:flex; align-items:center; justify-content:space-between; padding:1rem; background:#fff; border-radius:0.5rem; box-shadow:0 4px 10px rgba(2,6,23,0.04); }
-.dashboard-header h1 { margin:0; font-size:1.25rem; }
-.dashboard-section { margin-top:1rem; background:#fff; padding:1rem; border-radius:0.5rem; box-shadow:0 4px 10px rgba(2,6,23,0.04); }
+.dashboard-container { min-height: 100vh; background: var(--bg); }
+.dashboard-header { display:flex; align-items:center; justify-content:space-between; padding:1rem; background:var(--bg-surface); border-radius:0.5rem; box-shadow:var(--shadow-neon); }
+.dashboard-header h1 { margin:0; font-size:1.25rem; color:var(--text); }
+.dashboard-section { margin-top:1rem; background:var(--card); padding:1rem; border-radius:0.5rem; box-shadow:var(--shadow-neon); }
 .visitas-list li { list-style:none; }
 .chart-container, #chart-container { margin-top:1rem; }
 
