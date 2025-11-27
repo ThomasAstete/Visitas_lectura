@@ -30,7 +30,7 @@ const Sidebar = ({ currentView, setView }) => {
           <button
             key={item.id}
             onClick={() => setView(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${currentView === item.id ? 'bg-primary/10 text-primary border border-primary/30 shadow-neon' : 'text-muted hover:bg-white/5 hover:text-text' }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${currentView === item.id ? 'bg-primary/10 text-primary border border-primary/30 shadow-neon' : 'text-muted hover:bg-primary/10 hover:text-text' }`}
           >
             <item.icon size={20} className={currentView === item.id ? 'animate-pulse' : ''} />
             <span className="font-medium">{item.label}</span>
@@ -40,10 +40,10 @@ const Sidebar = ({ currentView, setView }) => {
 
       <div className="p-4 border-t border-white/10">
         {/* Aquí conectamos la función handleLogout */}
-        <button 
-            onClick={handleLogout} 
-            className="flex items-center gap-3 text-red-400 hover:text-red-300 transition-colors w-full p-2 hover:bg-white/5 rounded-lg"
-        >
+    <button 
+      onClick={handleLogout} 
+      className="flex items-center gap-3 text-accent hover:text-text transition-colors w-full p-2 hover:bg-primary/10 rounded-lg"
+    >
             <LogOut size={20} /> Salir
         </button>
       </div>

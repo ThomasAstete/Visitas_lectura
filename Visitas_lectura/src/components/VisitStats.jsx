@@ -119,18 +119,18 @@ const VisitStats = () => {
       </div>
 
       <div className="charts space-y-6">
-        <div className="chart-card bg-zinc-900 p-4 rounded-md">
-          <h4 className="text-sm text-gray-300 mb-2">Hoy (por hora)</h4>
+        <div className="chart-card bg-card p-4 rounded-md">
+          <h4 className="text-sm text-muted mb-2">Hoy (por hora)</h4>
           <LineChart labels={todayData.labels} dataset={todayData.data} title={"Visitas por Hora (Hoy)"} color={'var(--color-primary)'} />
         </div>
 
-        <div className="chart-card bg-zinc-900 p-4 rounded-md">
-          <h4 className="text-sm text-gray-300 mb-2">Este Mes (por día)</h4>
+        <div className="chart-card bg-card p-4 rounded-md">
+          <h4 className="text-sm text-muted mb-2">Este Mes (por día)</h4>
           <LineChart labels={monthData.labels} dataset={monthData.data} title={"Visitas por Día (Mes)"} color={'var(--color-accent)'} />
         </div>
 
-        <div className="chart-card bg-zinc-900 p-4 rounded-md">
-          <h4 className="text-sm text-gray-300 mb-2">Este Año (por mes)</h4>
+        <div className="chart-card bg-card p-4 rounded-md">
+          <h4 className="text-sm text-muted mb-2">Este Año (por mes)</h4>
           <LineChart labels={yearData.labels} dataset={yearData.data} title={"Visitas por Mes (Año)"} color={'var(--color-primary)'} />
         </div>
       </div>
