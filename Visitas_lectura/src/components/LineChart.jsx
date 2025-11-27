@@ -35,12 +35,32 @@ const LineChart = ({ labels = [], dataset = [], title = '', color = 'var(--color
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      title: { display: !!title, text: title, color: 'var(--text)' },
-      tooltip: { mode: 'index', intersect: false },
+      title: { display: !!title, text: title, color: 'var(--text)', font: { weight: '600' } },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        backgroundColor: 'rgba(0,0,0,0.75)',
+        titleColor: 'var(--text)',
+        bodyColor: 'var(--text)',
+        borderColor: 'rgba(255,255,255,0.06)',
+        borderWidth: 1,
+      },
     },
+    interaction: { intersect: false, mode: 'index' },
     scales: {
-      x: { ticks: { color: 'var(--muted)' } },
-      y: { ticks: { color: 'var(--muted)', precision: 0 }, beginAtZero: true },
+      x: {
+        ticks: { color: 'var(--text)', maxRotation: 0, autoSkip: true },
+        grid: { color: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' },
+      },
+      y: {
+        ticks: { color: 'var(--text)', precision: 0 },
+        beginAtZero: true,
+        grid: { color: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' },
+      },
+    },
+    elements: {
+      line: { borderWidth: 2 },
+      point: { radius: 3, hoverRadius: 5, borderWidth: 0 },
     },
   };
 
