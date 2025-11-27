@@ -124,6 +124,36 @@ export const getVisitas = async () => {
   // Por defecto devolver array vacío para evitar errores en componentes
   return [];
 };
+/**
+ * Obtener series agregadas desde el backend.
+ * period: 'today' | 'month' | 'year' or 'hour' | 'day' | 'month'
+ * params: objeto opcional { year, month, day }
+ * Espera que el backend devuelva { labels: [...], data: [...] } u otras formas normalizables.
+ */
+export const getVisitasAgg = async (period = 'month', params = {}) => {
+  const qs = new URLSearchParams({ period, ...params }).toString();
+  const data = await apiRequest(`/visitas/aggregated/?${qs}`);
+
+  // Normalizar distintas respuestas posibles
+  if (!data) return { labels: [], data: [] };
+  if (Array.isArray(data)) {
+    // Si el backend devolvió sólo un array de valores, construir labels simples
+    return { labels: data.map((_, i) => String(i)), data };
+  }
+  if (data.labels && Array.isArray(data.data)) return { labels: data.labels, data: data.data };
+  if (Array.isArray(data.results) && data.results.length && data.results[0].hasOwnProperty('label')) {
+    // Formato: [{label: '01', value: 3}, ...]
+    return { labels: data.results.map(r => r.label), data: data.results.map(r => r.value) };
+  }
+  // Buscar primer par de arrays en objeto
+  if (typeof data === 'object') {
+    const labels = Array.isArray(data.labels) ? data.labels : null;
+    const values = Array.isArray(data.data) ? data.data : null;
+    if (labels && values) return { labels, data: values };
+  }
+
+  return { labels: [], data: [] };
+};
 export const getVisita = (id) => apiRequest(`/visitas/${id}/`);
 export const deleteVisita = (id) => apiRequest(`/visitas/${id}/`, { method: 'DELETE' });
 export const saveVisita = (data, id = null) => 
