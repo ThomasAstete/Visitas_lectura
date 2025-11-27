@@ -2,24 +2,34 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Theme variables (Teal / Cyan palette) */
+/* Theme variables (Dark + Neon Orange/Green) */
 :root {
-  --color-primary: #06b6d4; /* cyan-teal */
-  --color-accent: #0891b2;
-  --bg: #071826; /* deep navy/teal */
-  --bg-surface: #0b2630; /* cards / sidebar */
-  --text: #e6feff; /* light text */
-  --muted: #9fdbe6; /* secondary text */
-  --card: #07282e;
-  --gradient-from: #06b6d4;
-  --gradient-to: #0891b2;
-  --shadow-neon: 0 0 14px rgba(6,182,212,0.18), 0 0 28px rgba(8,145,178,0.12);
+  /* Background */
+  --bg: #000000; /* true black background */
+  --bg-surface: #050505; /* slightly lifted surface for cards/sidebar */
+
+  /* Primary (neon orange) and accent (neon green) */
+  --color-primary: #ff7a00; /* neon orange */
+  --color-accent: #00ff7a; /* neon green */
+
+  /* Text and muted */
+  --text: #eafaf1; /* light text */
+  --muted: #9be7c4; /* soft greenish muted text */
+  --card: #071011; /* dark card surface */
+
+  --gradient-from: #ff7a00;
+  --gradient-to: #00ff7a;
+
+  /* Neon shadow mixes orange and green softly */
+  --shadow-neon: 0 0 18px rgba(255,122,0,0.16), 0 0 36px rgba(0,255,122,0.12);
 }
 
 /* Estilos globales opcionales */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg);
+  /* Usar variables de tema con fallback por si no están definidas en tiempo de ejecución */
+  background-color: var(--bg, #000000);
+  color: var(--text, #eafaf1);
   margin: 0;
   padding: 0;
 }
