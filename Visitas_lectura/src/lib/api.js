@@ -95,10 +95,35 @@ export const login = async (username, password) => {
 };
 
 export const logout = () => {
-  Cookies.remove('access_token');
-  Cookies.remove('refresh_token');
-  Cookies.remove('auth_scheme');
-  window.location.href = '/login';
+  try {
+    // Preferir usar js-cookie cuando esté disponible
+    if (Cookies && typeof Cookies.remove === 'function') {
+      try {
+        Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
+        Cookies.remove('auth_scheme');
+      } catch (e) {
+        console.warn('[logout] js-cookie remove failed:', e);
+      }
+    } else if (typeof document !== 'undefined') {
+      // Fallback: eliminar cookies manualmente
+      document.cookie = 'access_token=; Max-Age=0; path=/;';
+      document.cookie = 'refresh_token=; Max-Age=0; path=/;';
+      document.cookie = 'auth_scheme=; Max-Age=0; path=/;';
+    }
+  } catch (e) {
+    console.error('[logout] Error clearing cookies:', e);
+  }
+
+  // Redirigir al login de forma segura
+  try {
+    if (typeof window !== 'undefined') {
+      // Preferir assign para mantener historial menos agresivo
+      window.location.assign('/login');
+    }
+  } catch (e) {
+    console.error('[logout] Error redirecting to /login:', e);
+  }
 };
 
 // Endpoints para visitas
